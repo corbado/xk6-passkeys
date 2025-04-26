@@ -8,7 +8,7 @@ import (
 	"github.com/go-webauthn/webauthn/webauthn"
 )
 
-// User represents the user model
+// User represents a user in the WebAuthn system.
 type User struct {
 	id          uint64
 	name        string
@@ -16,7 +16,7 @@ type User struct {
 	credentials []webauthn.Credential
 }
 
-// NewUser creates and returns a new User
+// NewUser creates a new user with the given name and display name.
 func NewUser(name string, displayName string) *User {
 	user := &User{}
 	user.id = randomUint64()
@@ -25,46 +25,46 @@ func NewUser(name string, displayName string) *User {
 	return user
 }
 
+// randomUint64 generates a random 64-bit unsigned integer.
 func randomUint64() uint64 {
 	buf := make([]byte, 8)
 	rand.Read(buf)
 	return binary.LittleEndian.Uint64(buf)
 }
 
-// WebAuthnID returns the user's ID
+// WebAuthnID returns the user's ID as a byte slice for WebAuthn operations.
 func (u User) WebAuthnID() []byte {
 	buf := make([]byte, binary.MaxVarintLen64)
 	binary.PutUvarint(buf, uint64(u.id))
 	return buf
 }
 
-// WebAuthnName returns the user's username
+// WebAuthnName returns the user's username for WebAuthn operations.
 func (u User) WebAuthnName() string {
 	return u.name
 }
 
-// WebAuthnDisplayName returns the user's display name
+// WebAuthnDisplayName returns the user's display name for WebAuthn operations.
 func (u User) WebAuthnDisplayName() string {
 	return u.displayName
 }
 
-// WebAuthnIcon is not (yet) implemented
+// WebAuthnIcon returns an empty string as user icons are not supported.
 func (u User) WebAuthnIcon() string {
 	return ""
 }
 
-// AddCredential associates the credential to the user
+// AddCredential adds a new WebAuthn credential to the user's credentials list.
 func (u *User) AddCredential(cred webauthn.Credential) {
 	u.credentials = append(u.credentials, cred)
 }
 
-// WebAuthnCredentials returns credentials owned by the user
+// WebAuthnCredentials returns all WebAuthn credentials associated with the user.
 func (u User) WebAuthnCredentials() []webauthn.Credential {
 	return u.credentials
 }
 
-// CredentialExcludeList returns a CredentialDescriptor array filled
-// with all a user's credentials
+// CredentialExcludeList returns a list of credential descriptors to prevent duplicate registrations.
 func (u User) CredentialExcludeList() []protocol.CredentialDescriptor {
 	credentialExcludeList := []protocol.CredentialDescriptor{}
 	for _, cred := range u.credentials {
