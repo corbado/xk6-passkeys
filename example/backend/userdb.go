@@ -21,10 +21,12 @@ func NewUserDB() *UserDB {
 func (db *UserDB) GetUser(name string) (*User, error) {
 	db.mu.RLock()
 	defer db.mu.RUnlock()
+
 	user, ok := db.users[name]
 	if !ok {
 		return nil, nil
 	}
+
 	return user, nil
 }
 
@@ -32,5 +34,6 @@ func (db *UserDB) GetUser(name string) (*User, error) {
 func (db *UserDB) PutUser(user *User) {
 	db.mu.Lock()
 	defer db.mu.Unlock()
+
 	db.users[user.name] = user
 }
