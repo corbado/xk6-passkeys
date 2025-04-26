@@ -8,12 +8,14 @@ import (
 	"github.com/go-webauthn/webauthn/webauthn"
 )
 
+// WebAuthnServer handles WebAuthn registration and authentication endpoints.
 type WebAuthnServer struct {
 	webAuthn  *webauthn.WebAuthn
 	userDB    *UserDB
 	sessionDB *SessionDB
 }
 
+// NewWebAuthnServer creates a new WebAuthn server with the given dependencies.
 func NewWebAuthnServer(webAuthn *webauthn.WebAuthn, userDB *UserDB, sessionDB *SessionDB) *WebAuthnServer {
 	return &WebAuthnServer{
 		webAuthn:  webAuthn,
@@ -22,6 +24,7 @@ func NewWebAuthnServer(webAuthn *webauthn.WebAuthn, userDB *UserDB, sessionDB *S
 	}
 }
 
+// RegisterStart initiates the WebAuthn registration process for a user.
 func (s *WebAuthnServer) RegisterStart(c *gin.Context) {
 	username := c.Param("username")
 	if username == "" {
@@ -54,6 +57,7 @@ func (s *WebAuthnServer) RegisterStart(c *gin.Context) {
 	c.JSON(http.StatusOK, options)
 }
 
+// RegisterFinish completes the WebAuthn registration process for a user.
 func (s *WebAuthnServer) RegisterFinish(c *gin.Context) {
 	username := c.Param("username")
 	if username == "" {
@@ -96,6 +100,7 @@ func (s *WebAuthnServer) RegisterFinish(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "Registration Success"})
 }
 
+// LoginStart initiates the WebAuthn authentication process for a user.
 func (s *WebAuthnServer) LoginStart(c *gin.Context) {
 	username := c.Param("username")
 	if username == "" {
@@ -124,6 +129,7 @@ func (s *WebAuthnServer) LoginStart(c *gin.Context) {
 	c.JSON(http.StatusOK, options)
 }
 
+// LoginFinish completes the WebAuthn authentication process for a user.
 func (s *WebAuthnServer) LoginFinish(c *gin.Context) {
 	username := c.Param("username")
 	if username == "" {

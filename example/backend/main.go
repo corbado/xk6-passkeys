@@ -18,25 +18,16 @@ func main() {
 		log.Fatal("failed to create WebAuthn:", err)
 	}
 
-	// Initialize user database
 	userDB := NewUserDB()
-
-	// Initialize session database
 	sessionDB := NewSessionDB()
-
-	// Initialize WebAuthn server
 	server := NewWebAuthnServer(webAuthn, userDB, sessionDB)
 
-	// Initialize Gin router
 	router := gin.Default()
-
-	// Register routes
 	router.GET("/register/start/:username", server.RegisterStart)
 	router.POST("/register/finish/:username", server.RegisterFinish)
 	router.GET("/login/start/:username", server.LoginStart)
 	router.POST("/login/finish/:username", server.LoginFinish)
 
-	// Start server
 	log.Println("Starting server on :8080")
 	if err := router.Run(":8080"); err != nil {
 		log.Fatal("failed to start server:", err)
