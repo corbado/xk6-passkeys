@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -147,23 +148,27 @@ func (s *WebAuthnServer) LoginFinish(c *gin.Context) {
 	}
 
 	if user == nil {
+		log.Println("User not found:", username)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "user not found"})
 		return
 	}
 
 	sessionData, err := s.sessionDB.GetSession("authentication_" + username)
 	if err != nil {
+		log.Println("Error getting session:", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	if sessionData == nil {
+		log.Println("Session not found:", username)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "session not found"})
 		return
 	}
 
 	_, err = s.webAuthn.FinishLogin(user, *sessionData, c.Request)
 	if err != nil {
+		log.Println("Error finishing login:", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

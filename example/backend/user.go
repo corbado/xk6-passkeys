@@ -1,16 +1,12 @@
 package main
 
 import (
-	"crypto/rand"
-	"encoding/binary"
-
 	"github.com/go-webauthn/webauthn/protocol"
 	"github.com/go-webauthn/webauthn/webauthn"
 )
 
 // User represents a user in the WebAuthn system.
 type User struct {
-	id          uint64
 	name        string
 	displayName string
 	credentials []webauthn.Credential
@@ -19,24 +15,15 @@ type User struct {
 // NewUser creates a new user with the given name and display name.
 func NewUser(name string, displayName string) *User {
 	user := &User{}
-	user.id = randomUint64()
 	user.name = name
 	user.displayName = displayName
-	return user
-}
 
-// randomUint64 generates a random 64-bit unsigned integer.
-func randomUint64() uint64 {
-	buf := make([]byte, 8)
-	rand.Read(buf)
-	return binary.LittleEndian.Uint64(buf)
+	return user
 }
 
 // WebAuthnID returns the user's ID as a byte slice for WebAuthn operations.
 func (u User) WebAuthnID() []byte {
-	buf := make([]byte, binary.MaxVarintLen64)
-	binary.PutUvarint(buf, uint64(u.id))
-	return buf
+	return []byte(u.name)
 }
 
 // WebAuthnName returns the user's username for WebAuthn operations.
@@ -74,5 +61,6 @@ func (u User) CredentialExcludeList() []protocol.CredentialDescriptor {
 		}
 		credentialExcludeList = append(credentialExcludeList, descriptor)
 	}
+
 	return credentialExcludeList
 }
