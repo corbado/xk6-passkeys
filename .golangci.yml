@@ -38,7 +38,7 @@ linters-settings:
   exhaustive:
     default-signifies-exhaustive: true
   govet:
-    check-shadowing: true
+    shadow: true
   cyclop:
     max-complexity: 25
   maligned:
@@ -63,6 +63,7 @@ linters-settings:
 linters:
   disable-all: true
   enable:
+    - copyloopvar
     - asasalint
     - asciicheck
     - bidichk
@@ -77,7 +78,6 @@ linters:
     - errname
     - errorlint
     - exhaustive
-    - exportloopref
     - forbidigo
     - forcetypeassert
     - funlen
@@ -87,7 +87,6 @@ linters:
     - goconst
     - gocritic
     - gofmt
-    - gofumpt
     - goimports
     - gomoddirectives
     - goprintffuncname

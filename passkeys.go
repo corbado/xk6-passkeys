@@ -1,3 +1,4 @@
+// Package passkeys provides a k6 extension for passkeys load testing.
 package passkeys
 
 import (
@@ -12,18 +13,26 @@ func init() {
 	modules.Register("k6/x/passkeys", new(Passkeys))
 }
 
+// Passkeys is the main struct for the passkeys module.
 type Passkeys struct {
 }
 
+// NewCredential creates a new credential.
 func (p *Passkeys) NewCredential() virtualwebauthn.Credential {
 	return virtualwebauthn.NewCredential(virtualwebauthn.KeyTypeEC2)
 }
 
+// NewRelyingParty creates a new relying party.
 func (p *Passkeys) NewRelyingParty(name string, id string, origin string) virtualwebauthn.RelyingParty {
 	return virtualwebauthn.RelyingParty{Name: name, ID: id, Origin: origin}
 }
 
-func (p *Passkeys) CreateAttestationResponse(rp virtualwebauthn.RelyingParty, credential virtualwebauthn.Credential, attestationOptions string) string {
+// CreateAttestationResponse creates an attestation response.
+func (p *Passkeys) CreateAttestationResponse(
+	rp virtualwebauthn.RelyingParty,
+	credential virtualwebauthn.Credential,
+	attestationOptions string,
+) string {
 	aaguid, err := uuid.Parse(iCloudKeychainAaguid)
 	if err != nil {
 		panic(err)
@@ -43,7 +52,13 @@ func (p *Passkeys) CreateAttestationResponse(rp virtualwebauthn.RelyingParty, cr
 	return virtualwebauthn.CreateAttestationResponse(rp, authenticator, credential, *parsedAttestationOptions)
 }
 
-func (p *Passkeys) CreateAssertionResponse(rp virtualwebauthn.RelyingParty, credential virtualwebauthn.Credential, userHandle string, assertionOptions string) string {
+// CreateAssertionResponse creates an assertion response.
+func (p *Passkeys) CreateAssertionResponse(
+	rp virtualwebauthn.RelyingParty,
+	credential virtualwebauthn.Credential,
+	userHandle string,
+	assertionOptions string,
+) string {
 	aaguid, err := uuid.Parse(iCloudKeychainAaguid)
 	if err != nil {
 		panic(err)
