@@ -3,26 +3,18 @@ import { check } from 'k6';
 import passkeys from 'k6/x/passkeys';
 
 export const options = {
-    stages: [
-        { duration: '30s', target: 10 }, // Ramp up to 10 users
-        { duration: '1m', target: 10 },  // Stay at 10 users
-        { duration: '30s', target: 0 },  // Ramp down to 0 users
-    ],
-    thresholds: {
-        http_req_duration: ['p(95)<500'], // 95% of requests should be below 500ms
-        http_req_failed: ['rate<0.01'],   // Less than 1% of requests should fail
-    },
+    vus: 2,
+    duration: "60s",
 };
 
 const baseUrl = 'http://localhost:8080';
 const rp = passkeys.newRelyingParty('WebAuthn Demo', 'localhost', 'http://localhost:8080');
 
 export default function () {
-    // Generate a unique username for each virtual user
-    const username = `user_${__VU}_${Date.now()}`;
+    const username = Math.random().toString(36).substring(2, 22);
 
     // Step 1: Start registration
-    const startResponse = http.get(`${baseUrl}/register/start/${username}`);
+    const startResponse = http.get(`${baseUrl}/register/start/${username}`, { tags: { name: 'register/start' } });
     check(startResponse, {
         'registration start status is 200': (r) => r.status === 200,
         'registration start has options': (r) => r.json() !== null,
@@ -46,6 +38,7 @@ export default function () {
         attestationResponse,
         {
             headers: { 'Content-Type': 'application/json' },
+            tags: { name: 'register/finish' },
         }
     );
 
