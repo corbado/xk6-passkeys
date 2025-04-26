@@ -14,11 +14,11 @@ type WebAuthnServer struct {
 	sessionDB *SessionDB
 }
 
-func NewWebAuthnServer(webAuthn *webauthn.WebAuthn, userDB *UserDB) *WebAuthnServer {
+func NewWebAuthnServer(webAuthn *webauthn.WebAuthn, userDB *UserDB, sessionDB *SessionDB) *WebAuthnServer {
 	return &WebAuthnServer{
 		webAuthn:  webAuthn,
 		userDB:    userDB,
-		sessionDB: NewSessionDB(),
+		sessionDB: sessionDB,
 	}
 }
 

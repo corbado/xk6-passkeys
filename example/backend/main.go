@@ -21,8 +21,11 @@ func main() {
 	// Initialize user database
 	userDB := NewUserDB()
 
+	// Initialize session database
+	sessionDB := NewSessionDB()
+
 	// Initialize WebAuthn server
-	server := NewWebAuthnServer(webAuthn, userDB)
+	server := NewWebAuthnServer(webAuthn, userDB, sessionDB)
 
 	// Initialize Gin router
 	router := gin.Default()
