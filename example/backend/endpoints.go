@@ -38,10 +38,13 @@ func (s *WebAuthnServer) RegisterStart(c *gin.Context) {
 		return
 	}
 
-	if user == nil {
-		user = NewUser(username, username)
-		s.userDB.PutUser(user)
+	if user != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "user already exists"})
+		return
 	}
+
+	user = NewUser(username, username)
+	s.userDB.PutUser(user)
 
 	registerOptions := func(credCreationOpts *protocol.PublicKeyCredentialCreationOptions) {
 		credCreationOpts.CredentialExcludeList = user.CredentialExcludeList()
