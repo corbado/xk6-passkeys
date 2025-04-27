@@ -1,8 +1,6 @@
 package main
 
 import (
-	"bytes"
-	"io"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -82,18 +80,7 @@ func (s *WebAuthnServer) RegisterFinish(c *gin.Context) {
 		return
 	}
 
-	// Read the request body
-	body, err := io.ReadAll(c.Request.Body)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	// Create a new request with the same body for parsing
-	req1 := c.Request.Clone(c.Request.Context())
-	req1.Body = io.NopCloser(bytes.NewReader(body))
-
-	credentialCreationResponse, err := protocol.ParseCredentialCreationResponse(req1)
+	credentialCreationResponse, err := protocol.ParseCredentialCreationResponse(c.Request)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -112,11 +99,10 @@ func (s *WebAuthnServer) RegisterFinish(c *gin.Context) {
 		return
 	}
 
-	// Create another new request with the same body for finishing registration
-	req2 := c.Request.Clone(c.Request.Context())
-	req2.Body = io.NopCloser(bytes.NewReader(body))
-
-	credential, err := s.webAuthn.FinishRegistration(user, *sessionData, req2)
+	// Using CreateCredential() instead of FinishRegistration() because we already have the
+	// credentialCreationResponse. We had to to this to fix problems with "double consuming"
+	// the request body.
+	credential, err := s.webAuthn.CreateCredential(user, *sessionData, credentialCreationResponse)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -178,24 +164,13 @@ func (s *WebAuthnServer) LoginFinish(c *gin.Context) {
 		return
 	}
 
-	// Read the request body
-	body, err := io.ReadAll(c.Request.Body)
+	credentialRequestResponse, err := protocol.ParseCredentialRequestResponse(c.Request)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Create a new request with the same body for parsing
-	req1 := c.Request.Clone(c.Request.Context())
-	req1.Body = io.NopCloser(bytes.NewReader(body))
-
-	assertionResponse, err := protocol.ParseCredentialRequestResponse(req1)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	challenge := assertionResponse.Response.CollectedClientData.Challenge
+	challenge := credentialRequestResponse.Response.CollectedClientData.Challenge
 
 	sessionData, err := s.sessionDB.GetSession("login_" + challenge)
 	if err != nil {
@@ -208,11 +183,10 @@ func (s *WebAuthnServer) LoginFinish(c *gin.Context) {
 		return
 	}
 
-	// Create another new request with the same body for finishing login
-	req2 := c.Request.Clone(c.Request.Context())
-	req2.Body = io.NopCloser(bytes.NewReader(body))
-
-	_, err = s.webAuthn.FinishLogin(user, *sessionData, req2)
+	// Using ValidateLogin() instead of FinishLogin() because we already have the
+	// credentialRequestResponse. We had to to this to fix problems with "double consuming"
+	// the request body.
+	_, err = s.webAuthn.ValidateLogin(user, *sessionData, credentialRequestResponse)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
