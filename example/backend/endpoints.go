@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"io"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -80,11 +82,23 @@ func (s *WebAuthnServer) RegisterFinish(c *gin.Context) {
 		return
 	}
 
-	credentialCreationResponse, err := protocol.ParseCredentialCreationResponse(c.Request)
+	// Read the request body
+	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
+	// Create a new request with the same body for parsing
+	req1 := c.Request.Clone(c.Request.Context())
+	req1.Body = io.NopCloser(bytes.NewReader(body))
+
+	credentialCreationResponse, err := protocol.ParseCredentialCreationResponse(req1)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
 	challenge := credentialCreationResponse.Response.CollectedClientData.Challenge
 
 	sessionData, err := s.sessionDB.GetSession("register_" + challenge)
@@ -98,7 +112,11 @@ func (s *WebAuthnServer) RegisterFinish(c *gin.Context) {
 		return
 	}
 
-	credential, err := s.webAuthn.FinishRegistration(user, *sessionData, c.Request)
+	// Create another new request with the same body for finishing registration
+	req2 := c.Request.Clone(c.Request.Context())
+	req2.Body = io.NopCloser(bytes.NewReader(body))
+
+	credential, err := s.webAuthn.FinishRegistration(user, *sessionData, req2)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -160,11 +178,23 @@ func (s *WebAuthnServer) LoginFinish(c *gin.Context) {
 		return
 	}
 
-	assertionResponse, err := protocol.ParseCredentialRequestResponse(c.Request)
+	// Read the request body
+	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
+	// Create a new request with the same body for parsing
+	req1 := c.Request.Clone(c.Request.Context())
+	req1.Body = io.NopCloser(bytes.NewReader(body))
+
+	assertionResponse, err := protocol.ParseCredentialRequestResponse(req1)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
 	challenge := assertionResponse.Response.CollectedClientData.Challenge
 
 	sessionData, err := s.sessionDB.GetSession("login_" + challenge)
@@ -178,7 +208,11 @@ func (s *WebAuthnServer) LoginFinish(c *gin.Context) {
 		return
 	}
 
-	_, err = s.webAuthn.FinishLogin(user, *sessionData, c.Request)
+	// Create another new request with the same body for finishing login
+	req2 := c.Request.Clone(c.Request.Context())
+	req2.Body = io.NopCloser(bytes.NewReader(body))
+
+	_, err = s.webAuthn.FinishLogin(user, *sessionData, req2)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

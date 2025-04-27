@@ -1,10 +1,10 @@
 import http from 'k6/http';
-import { check } from 'k6';
 import passkeys from 'k6/x/passkeys';
+import { success, failure } from './helper.js';
 
 export const options = {
     vus: 2,
-    duration: "60s",
+    duration: "30s",
 };
 
 const baseUrl = 'http://localhost:8080';

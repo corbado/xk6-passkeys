@@ -5,7 +5,7 @@ import { success, failure } from './helper.js';
 
 export const options = {
     vus: 2,
-    duration: "60s",
+    duration: "30s",
 };
 
 const baseUrl = 'http://localhost:8080';
@@ -73,7 +73,7 @@ export default function (data) {
             tags: { name: 'login/finish' },
         }
     );
-    if (startResponse.status !== 200) {
+    if (finishResponse.status !== 200) {
         failure(`Request to login/finish failed with status ${finishResponse.status} (body: ${finishResponse.body})`);
     }
 
