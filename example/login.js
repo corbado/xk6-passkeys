@@ -1,6 +1,7 @@
 import http from 'k6/http';
 import { check } from 'k6';
 import passkeys from 'k6/x/passkeys';
+import { success, failure } from './helper.js';
 
 export const options = {
     vus: 2,
@@ -17,7 +18,7 @@ export function setup() {
     // Step 1: Start registration
     const startResponse = http.get(`${baseUrl}/register/start/${username}`, { tags: { name: 'register/start' } });
     if (startResponse.status !== 200) {
-        throw new Error('Failed to start registration');
+        throw new Error(`Request to register/start failed with status ${startResponse.status} (body: ${startResponse.body})`);
     }
 
     // Step 2: Create attestation response
@@ -39,7 +40,7 @@ export function setup() {
     );
 
     if (finishResponse.status !== 200) {
-        throw new Error('Failed to complete registration');
+        throw new Error(`Request to register/finish failed with status ${finishResponse.status} (body: ${finishResponse.body})`);
     }
 
     return { username, credential: JSON.stringify(credential) };
@@ -51,13 +52,8 @@ export default function (data) {
 
     // Step 1: Start login
     const startResponse = http.get(`${baseUrl}/login/start/${username}`, { tags: { name: 'login/start' } });
-    check(startResponse, {
-        'login start status is 200': (r) => r.status === 200,
-        'login start has options': (r) => r.json() !== null,
-    });
-
     if (startResponse.status !== 200) {
-        return;
+        failure(`Request to login/start failed with status ${startResponse.status} (body: ${startResponse.body})`);
     }
 
     // Step 2: Create assertion response
@@ -77,9 +73,9 @@ export default function (data) {
             tags: { name: 'login/finish' },
         }
     );
+    if (startResponse.status !== 200) {
+        failure(`Request to login/finish failed with status ${finishResponse.status} (body: ${finishResponse.body})`);
+    }
 
-    check(finishResponse, {
-        'login finish status is 200': (r) => r.status === 200,
-        'login finish is successful': (r) => r.json('status') === 'Login Success',
-    });
+    success();
 }

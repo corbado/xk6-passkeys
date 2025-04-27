@@ -15,13 +15,8 @@ export default function () {
 
     // Step 1: Start registration
     const startResponse = http.get(`${baseUrl}/register/start/${username}`, { tags: { name: 'register/start' } });
-    check(startResponse, {
-        'registration start status is 200': (r) => r.status === 200,
-        'registration start has options': (r) => r.json() !== null,
-    });
-
     if (startResponse.status !== 200) {
-        return;
+        failure(`Request to register/start failed with status ${startResponse.status} (body: ${startResponse.body})`);
     }
 
     // Step 2: Create attestation response
@@ -41,9 +36,9 @@ export default function () {
             tags: { name: 'register/finish' },
         }
     );
+    if (finishResponse.status !== 200) {
+        failure(`Request to register/finish failed with status ${finishResponse.status} (body: ${finishResponse.body})`);
+    }
 
-    check(finishResponse, {
-        'registration finish status is 200': (r) => r.status === 200,
-        'registration finish is successful': (r) => r.json('status') === 'Registration Success',
-    });
+    success();
 }

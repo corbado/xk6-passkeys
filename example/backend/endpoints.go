@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -56,8 +55,9 @@ func (s *WebAuthnServer) RegisterStart(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	challenge := options.Response.Challenge.String()
 
-	s.sessionDB.SaveSession("registration_"+username, sessionData)
+	s.sessionDB.SaveSession("register_"+challenge, sessionData)
 	c.JSON(http.StatusOK, options)
 }
 
@@ -76,30 +76,37 @@ func (s *WebAuthnServer) RegisterFinish(c *gin.Context) {
 	}
 
 	if user == nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "user not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		return
 	}
 
-	sessionData, err := s.sessionDB.GetSession("registration_" + username)
+	credentialCreationResponse, err := protocol.ParseCredentialCreationResponse(c.Request)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	challenge := credentialCreationResponse.Response.CollectedClientData.Challenge
+
+	sessionData, err := s.sessionDB.GetSession("register_" + challenge)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	if sessionData == nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "session not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "session not found"})
 		return
 	}
 
 	credential, err := s.webAuthn.FinishRegistration(user, *sessionData, c.Request)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	user.AddCredential(*credential)
 	s.userDB.PutUser(user)
-	s.sessionDB.DeleteSession("registration_" + username)
+	s.sessionDB.DeleteSession("register_" + challenge)
 
 	c.JSON(http.StatusOK, gin.H{"status": "Registration Success"})
 }
@@ -119,7 +126,7 @@ func (s *WebAuthnServer) LoginStart(c *gin.Context) {
 	}
 
 	if user == nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "user not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		return
 	}
 
@@ -129,7 +136,8 @@ func (s *WebAuthnServer) LoginStart(c *gin.Context) {
 		return
 	}
 
-	s.sessionDB.SaveSession("authentication_"+username, sessionData)
+	challenge := options.Response.Challenge.String()
+	s.sessionDB.SaveSession("login_"+challenge, sessionData)
 	c.JSON(http.StatusOK, options)
 }
 
@@ -148,31 +156,34 @@ func (s *WebAuthnServer) LoginFinish(c *gin.Context) {
 	}
 
 	if user == nil {
-		log.Println("User not found:", username)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "user not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		return
 	}
 
-	sessionData, err := s.sessionDB.GetSession("authentication_" + username)
+	assertionResponse, err := protocol.ParseCredentialRequestResponse(c.Request)
 	if err != nil {
-		log.Println("Error getting session:", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	challenge := assertionResponse.Response.CollectedClientData.Challenge
+
+	sessionData, err := s.sessionDB.GetSession("login_" + challenge)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	if sessionData == nil {
-		log.Println("Session not found:", username)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "session not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "session not found"})
 		return
 	}
 
 	_, err = s.webAuthn.FinishLogin(user, *sessionData, c.Request)
 	if err != nil {
-		log.Println("Error finishing login:", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	s.sessionDB.DeleteSession("authentication_" + username)
+	s.sessionDB.DeleteSession("login_" + challenge)
 	c.JSON(http.StatusOK, gin.H{"status": "Login Success"})
 }
