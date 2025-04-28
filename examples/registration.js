@@ -13,6 +13,10 @@ const rp = passkeys.newRelyingParty('WebAuthn Demo', 'localhost', 'http://localh
 export default function () {
     const username = Math.random().toString(36).substring(2, 22);
 
+    /**/ 
+    console.log(`${baseUrl}/register/start/${username}`);
+    /**/
+
     // Step 1: Start registration
     const startResponse = http.get(`${baseUrl}/register/start/${username}`, { tags: { name: 'register/start' } });
     if (startResponse.status !== 200) {
