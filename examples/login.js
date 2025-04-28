@@ -1,5 +1,4 @@
 import http from 'k6/http';
-import { check } from 'k6';
 import passkeys from 'k6/x/passkeys';
 import { success, failure } from './helper.js';
 
