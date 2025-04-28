@@ -23,6 +23,7 @@ func main() {
 	server := NewWebAuthnServer(webAuthn, userDB, sessionDB)
 
 	router := gin.Default()
+	router.GET("/ping", server.Ping)
 	router.GET("/register/start/:username", server.RegisterStart)
 	router.POST("/register/finish/:username", server.RegisterFinish)
 	router.GET("/login/start/:username", server.LoginStart)

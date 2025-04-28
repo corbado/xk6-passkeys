@@ -14,8 +14,7 @@ export default function () {
     const username = randomString(20);
 
     // Step 1: Start registration
-    //const startResponse = http.get(`${baseUrl}/register/start/${username}`, { tags: { name: 'start' } });
-    const startResponse = http.get(`${baseUrl}/register/start/${username}`);
+    const startResponse = http.get(`${baseUrl}/register/start/${username}`, { tags: { name: 'start' } });
     if (startResponse.status !== 200) {
         //failure(`Request to register/start failed with status ${startResponse.status} (body: ${startResponse.body})`);
         failure(`Request to register/start failed with status ${startResponse.status}`);

@@ -24,6 +24,11 @@ func NewWebAuthnServer(webAuthn *webauthn.WebAuthn, userDB *UserDB, sessionDB *S
 	}
 }
 
+// Ping is a health check endpoint.
+func (s *WebAuthnServer) Ping(c *gin.Context) {
+	c.String(http.StatusOK, "pong")
+}
+
 // RegisterStart initiates the WebAuthn registration process for a user.
 func (s *WebAuthnServer) RegisterStart(c *gin.Context) {
 	username := c.Param("username")
