@@ -16,7 +16,8 @@ export default function () {
     // Step 1: Start registration
     const startResponse = http.get(`${baseUrl}/register/start/${username}`, { tags: { name: 'register/start' } });
     if (startResponse.status !== 200) {
-        failure(`Request to register/start failed with status ${startResponse.status} (body: ${startResponse.body})`);
+        failure('Request to register/start failed with status ' + startResponse.status);
+        //failure(`Request to register/start failed with status ${startResponse.status} (body: ${startResponse.body})`);
     }
 
     // Step 2: Create attestation response
