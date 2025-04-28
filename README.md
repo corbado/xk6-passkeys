@@ -30,7 +30,7 @@ docker build -t passkeys-backend examples/backend
 docker run -p 8080:8080 passkeys-backend
 ```
 
-🚨 **Important**: The backend has been implemented solely for testing purposes. It has not been secured, thoroughly tested, nor does it adhere to best practices.
+🚨 **The backend has been implemented solely for testing purposes. It has not been secured, thoroughly tested, nor does it adhere to best practices.**
 
 To load test the registration flow, run the following command:
 
