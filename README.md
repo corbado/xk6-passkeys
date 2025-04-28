@@ -33,11 +33,11 @@ docker run -p 8080:8080 passkeys-backend
 To load test the registration flow, run the following command:
 
 ```bash
-k6 run examples/registration.js
+./k6 run examples/registration.js
 ```
 
 To load test the login flow, run the following command:
 
 ```bash
-k6 run examples/login.js
+./k6 run examples/login.js
 ```
