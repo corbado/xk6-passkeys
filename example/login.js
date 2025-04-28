@@ -43,6 +43,7 @@ export function setup() {
         throw new Error(`Request to register/finish failed with status ${finishResponse.status} (body: ${finishResponse.body})`);
     }
 
+    // We need to stringify the credential to avoid the "invalid credential" error (did not find the root cause yet)
     return { username, credential: JSON.stringify(credential) };
 }
 
