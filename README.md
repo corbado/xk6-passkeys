@@ -4,6 +4,8 @@ A k6 extension for testing passkey backends ("WebAuthn servers"). With this exte
 
 ## Prerequisites
 
+To build the extension and run the examples, you need the following tools:
+
 - [Make](https://www.gnu.org/software/make/)
 - [Docker](https://docs.docker.com/get-docker/)
 
