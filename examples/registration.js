@@ -7,7 +7,7 @@ export const options = {
     duration: "30s",
 };
 
-const baseUrl = 'http://localhost:8080';
+const baseUrl = 'http://127.0.0.1:8080';
 const rp = passkeys.newRelyingParty('WebAuthn Demo', 'localhost', 'http://localhost:8080');
 
 export default function () {
