@@ -12,7 +12,10 @@ const rp = passkeys.newRelyingParty('WebAuthn Demo', 'localhost', 'http://localh
 
 // Setup function to create a single test user
 export function setup() {
-    const username = Math.random().toString(36).substring(2, 22);
+    const username = Array.from({ length: 20 }, () => {
+        const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        return chars.charAt(Math.floor(Math.random() * chars.length));
+    }).join('');
 
     // Step 1: Start registration
     const startResponse = http.get(`${baseUrl}/register/start/${username}`, { tags: { name: 'register/start' } });

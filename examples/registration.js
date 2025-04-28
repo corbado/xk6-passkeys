@@ -11,17 +11,15 @@ const baseUrl = 'http://localhost:8080';
 const rp = passkeys.newRelyingParty('WebAuthn Demo', 'localhost', 'http://localhost:8080');
 
 export default function () {
-    const username = Math.random().toString(36).substring(2, 22);
-
-    /**/ 
-    console.log(`${baseUrl}/register/start/${username}`);
-    /**/
+    const username = Array.from({ length: 20 }, () => {
+        const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        return chars.charAt(Math.floor(Math.random() * chars.length));
+    }).join('');
 
     // Step 1: Start registration
     const startResponse = http.get(`${baseUrl}/register/start/${username}`, { tags: { name: 'register/start' } });
     if (startResponse.status !== 200) {
-        failure('Request to register/start failed with status ' + startResponse.status);
-        //failure(`Request to register/start failed with status ${startResponse.status} (body: ${startResponse.body})`);
+        failure(`Request to register/start failed with status ${startResponse.status} (body: ${startResponse.body})`);
     }
 
     // Step 2: Create attestation response
