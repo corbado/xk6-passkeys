@@ -2,6 +2,11 @@
 
 A k6 extension for testing passkey backends ("WebAuthn servers"). With this extension, you can load test your passkey registration and login flows.
 
+## Prerequisites
+
+- [Make](https://www.gnu.org/software/make/)
+- [Docker](https://docs.docker.com/get-docker/)
+
 ## Build
 
 For your convenience, we provide a Makefile to build the extension:
@@ -14,7 +19,9 @@ This will create a `k6` binary in the current directory with the extension compi
 
 ## Examples
 
-We have implemented two example load tests in the `examples` directory: one for registration and one for login. Since a passkeys backend is required for testing, we provide a sample backend for load testing. To start the example, execute the following commands:
+We have implemented two example load tests in the `examples` directory: one for registration and one for login.
+
+Since a passkeys backend is required for testing, we provide a sample backend for load testing. To start the backend, execute the following commands:
 
 ```bash
 docker build -t passkeys-backend examples/backend
