@@ -16,10 +16,14 @@ export default function () {
         return chars.charAt(Math.floor(Math.random() * chars.length));
     }).join('');
 
+    const endpoint = `${baseUrl}/register/start/${username}`;
+    console.log(endpoint);
+
     // Step 1: Start registration
-    const startResponse = http.get(`${baseUrl}/register/start/${username}`, { tags: { name: 'register/start' } });
+    const startResponse = http.get(endpoint, { tags: { name: 'register/start' } });
     if (startResponse.status !== 200) {
-        failure(`Request to register/start failed with status ${startResponse.status} (body: ${startResponse.body})`);
+        //failure(`Request to register/start failed with status ${startResponse.status} (body: ${startResponse.body})`);
+        failure(`Request to register/start failed with status ${startResponse.status}`);
     }
 
     // Step 2: Create attestation response
