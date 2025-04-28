@@ -1,26 +1,20 @@
 import http from 'k6/http';
 import passkeys from 'k6/x/passkeys';
-import { success, failure } from './helper.js';
+import { success, failure, randomString } from './helper.js';
 
 export const options = {
     vus: 2,
     duration: "30s",
 };
 
-const baseUrl = 'http://127.0.0.1:8080';
+const baseUrl = 'http://localhost:8080';
 const rp = passkeys.newRelyingParty('WebAuthn Demo', 'localhost', 'http://localhost:8080');
 
 export default function () {
-    const username = Array.from({ length: 20 }, () => {
-        const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        return chars.charAt(Math.floor(Math.random() * chars.length));
-    }).join('');
-
-    const endpoint = `${baseUrl}/register/start/${username}`;
-    console.log(endpoint);
+    const username = randomString(20);
 
     // Step 1: Start registration
-    const startResponse = http.get(endpoint, { tags: { name: 'register/start' } });
+    const startResponse = http.get(`${baseUrl}/register/start/${username}`, { tags: { name: 'start' } });
     if (startResponse.status !== 200) {
         //failure(`Request to register/start failed with status ${startResponse.status} (body: ${startResponse.body})`);
         failure(`Request to register/start failed with status ${startResponse.status}`);
@@ -40,7 +34,7 @@ export default function () {
         attestationResponse,
         {
             headers: { 'Content-Type': 'application/json' },
-            tags: { name: 'register/finish' },
+            tags: { name: 'finish' },
         }
     );
     if (finishResponse.status !== 200) {

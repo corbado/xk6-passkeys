@@ -12,13 +12,10 @@ const rp = passkeys.newRelyingParty('WebAuthn Demo', 'localhost', 'http://localh
 
 // Setup function to create a single test user
 export function setup() {
-    const username = Array.from({ length: 20 }, () => {
-        const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        return chars.charAt(Math.floor(Math.random() * chars.length));
-    }).join('');
+     const username = randomString(20);
 
     // Step 1: Start registration
-    const startResponse = http.get(`${baseUrl}/register/start/${username}`, { tags: { name: 'register/start' } });
+    const startResponse = http.get(`${baseUrl}/register/start/${username}`);
     if (startResponse.status !== 200) {
         throw new Error(`Request to register/start failed with status ${startResponse.status} (body: ${startResponse.body})`);
     }
@@ -37,7 +34,6 @@ export function setup() {
         attestationResponse,
         {
             headers: { 'Content-Type': 'application/json' },
-            tags: { name: 'register/finish' },
         }
     );
 
@@ -54,7 +50,7 @@ export default function (data) {
     const credential = JSON.parse(data.credential);
 
     // Step 1: Start login
-    const startResponse = http.get(`${baseUrl}/login/start/${username}`, { tags: { name: 'login/start' } });
+    const startResponse = http.get(`${baseUrl}/login/start/${username}`, { tags: { name: 'start' } });
     if (startResponse.status !== 200) {
         failure(`Request to login/start failed with status ${startResponse.status} (body: ${startResponse.body})`);
     }
@@ -73,7 +69,7 @@ export default function (data) {
         assertionResponse,
         {
             headers: { 'Content-Type': 'application/json' },
-            tags: { name: 'login/finish' },
+            tags: { name: 'finish' },
         }
     );
     if (finishResponse.status !== 200) {
