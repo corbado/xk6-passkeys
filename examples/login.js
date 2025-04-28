@@ -1,6 +1,6 @@
 import http from 'k6/http';
 import passkeys from 'k6/x/passkeys';
-import { success, failure } from './helper.js';
+import { success, failure, randomString } from './helper.js';
 
 export const options = {
     vus: 2,
