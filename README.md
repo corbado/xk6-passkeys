@@ -34,13 +34,13 @@ docker run -p 8080:8080 passkeys-backend
 
 🚨 **The backend has been implemented solely for testing purposes. It has not been reviewed, secured, thoroughly tested, nor does it adhere to best practices.**
 
-To load test the registration flow, run the following command:
+To load test the registration flow, run the following command (**in a different terminal**):
 
 ```bash
 ./k6 run examples/registration.js
 ```
 
-To load test the login flow, run the following command:
+To load test the login flow, run the following command (**in a different terminal**):
 
 ```bash
 ./k6 run examples/login.js
