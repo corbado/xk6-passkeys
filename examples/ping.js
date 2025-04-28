@@ -6,7 +6,7 @@ export const options = {
     duration: "30s",
 };
 
-const baseUrl = 'http://127.0.0.1:8080';
+const baseUrl = 'http://localhost:8080';
 
 export default function () {
     const resp = http.get(`${baseUrl}/ping`);
