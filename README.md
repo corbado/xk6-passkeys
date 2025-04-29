@@ -2,6 +2,8 @@
 
 A k6 extension for load-testing passkey backends ("WebAuthn servers"). With this extension, you can load-test your passkey registration and login flows.
 
+For additional assistance and information, we strongly recommend reading our [blog post about passkey performance testing](https://www.corbado.com/blog/passkey-performance-testing).
+
 ## Prerequisites
 
 To build the extension and run the examples, you need the following tools:
