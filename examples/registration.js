@@ -19,7 +19,7 @@ export default function () {
         failure(`Request to register/start failed with status ${startResponse.status} (body: ${startResponse.body})`);
     }
 
-    // Step 2: Create attestation response
+    // Step 2: Create attestation response (simulate the client side and call to navigator.credentials.create())
     const credential = passkeys.newCredential();
     const attestationResponse = passkeys.createAttestationResponse(
         rp,

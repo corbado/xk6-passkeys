@@ -12,7 +12,7 @@ const rp = passkeys.newRelyingParty('WebAuthn Demo', 'localhost', 'http://localh
 
 // Setup function to create a single test user
 export function setup() {
-     const username = randomString(20);
+    const username = randomString(20);
 
     // Step 1: Start registration
     const startResponse = http.get(`${baseUrl}/register/start/${username}`);
@@ -20,7 +20,7 @@ export function setup() {
         throw new Error(`Request to register/start failed with status ${startResponse.status} (body: ${startResponse.body})`);
     }
 
-    // Step 2: Create attestation response
+    // Step 2: Create attestation response (simulate the client side and call to navigator.credentials.create())
     const credential = passkeys.newCredential();
     const attestationResponse = passkeys.createAttestationResponse(
         rp,
@@ -55,7 +55,7 @@ export default function (data) {
         failure(`Request to login/start failed with status ${startResponse.status} (body: ${startResponse.body})`);
     }
 
-    // Step 2: Create assertion response
+    // Step 2: Create assertion response (simulate the client side and call to navigator.credentials.get())
     const assertionResponse = passkeys.createAssertionResponse(
         rp,
         credential,
