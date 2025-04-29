@@ -40,8 +40,12 @@ To load-test the registration flow, run the following command (**in a different 
 ./k6 run examples/registration.js
 ```
 
+![Running k6 Registration](assets/running_k6_registration.gif)
+
 To load-test the login flow, run the following command (**in a different terminal**):
 
 ```bash
 ./k6 run examples/login.js
 ```
+
+![Running k6 Registration](assets/running_k6_login.gif)
