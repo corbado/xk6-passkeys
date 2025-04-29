@@ -1,6 +1,6 @@
 # xk6-passkeys
 
-A k6 extension for testing passkey backends ("WebAuthn servers"). With this extension, you can load test your passkey registration and login flows.
+A k6 extension for load-testing passkey backends ("WebAuthn servers"). With this extension, you can load-test your passkey registration and login flows.
 
 ## Prerequisites
 
@@ -23,24 +23,24 @@ This will create a `k6` binary in the current directory with the extension compi
 
 ## Examples
 
-We have implemented two example load tests in the `examples` directory: one for registration and one for login.
+We have implemented two example load-tests in the `examples` directory: one for registration and one for login.
 
-Since a passkeys backend is required for testing, we provide a sample backend for load testing. To start the backend, execute the following commands:
+Since a passkeys backend is required for load-testing, we provide a sample backend for load-testing. To start the backend, execute the following commands:
 
 ```bash
 docker build -t passkeys-backend examples/backend
 docker run -p 8080:8080 passkeys-backend
 ```
 
-🚨 **The backend has been implemented solely for testing purposes. It has not been reviewed, secured, thoroughly tested, nor does it adhere to best practices.**
+🚨 **The backend has been implemented solely for load-testing purposes. It has not been reviewed, secured, thoroughly tested, nor does it adhere to best practices.**
 
-To load test the registration flow, run the following command (**in a different terminal**):
+To load-test the registration flow, run the following command (**in a different terminal**):
 
 ```bash
 ./k6 run examples/registration.js
 ```
 
-To load test the login flow, run the following command (**in a different terminal**):
+To load-test the login flow, run the following command (**in a different terminal**):
 
 ```bash
 ./k6 run examples/login.js
