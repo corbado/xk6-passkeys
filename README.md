@@ -23,6 +23,8 @@ make build
 
 This will create a `k6` binary in the current directory with the extension compiled in.
 
+For detailed instructions on building k6 extensions, please refer to the [official documentation](https://grafana.com/docs/k6/latest/extensions/build-k6-binary-using-go/).
+
 ## Examples
 
 We have implemented two example load-tests in the `examples` directory: one for registration and one for login.
