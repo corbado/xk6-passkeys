@@ -1,0 +1,14 @@
+{
+  "name": "xk6-passkeys-examples",
+  "version": "1.0.0",
+  "description": "Examples for xk6-passkeys",
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.1"
+  }
+} 
