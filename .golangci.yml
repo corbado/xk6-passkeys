@@ -2,6 +2,7 @@
 # Please don't remove the first line. It is used in CI to determine the golangci version
 run:
   deadline: 5m
+  timeout: 3m
 
 issues:
   # Maximum issues count per one linter. Set to 0 to disable. Default is 50.
