@@ -15,8 +15,8 @@ jobs:
   build-and-smoke:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
         with:
           go-version: 1.26.x
           cache-dependency-path: |
@@ -36,8 +36,8 @@ jobs:
         platform: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
         with:
           go-version: 1.26.x
           cache-dependency-path: |
