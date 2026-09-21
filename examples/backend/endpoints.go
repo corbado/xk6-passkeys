@@ -51,11 +51,8 @@ func (s *WebAuthnServer) RegisterStart(c *gin.Context) {
 	user = NewUser(username, username)
 	s.userDB.PutUser(user)
 
-	registerOptions := func(credCreationOpts *protocol.PublicKeyCredentialCreationOptions) {
-		credCreationOpts.CredentialExcludeList = user.CredentialExcludeList()
-	}
-
-	options, sessionData, err := s.webAuthn.BeginRegistration(user, registerOptions)
+	options, sessionData, err := s.webAuthn.BeginRegistration(user,
+		webauthn.WithExclusions(user.CredentialExcludeList()))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

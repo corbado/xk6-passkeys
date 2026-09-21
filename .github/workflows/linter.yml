@@ -18,10 +18,13 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@v4
         with:
-          go-version: 1.23.x
+          go-version: 1.26.x
       - name: Check module dependencies
         run: |
           go version
+          test -z "$(go mod tidy && git status go.* --porcelain)"
+          go mod verify
+          cd examples/backend
           test -z "$(go mod tidy && git status go.* --porcelain)"
           go mod verify
 
@@ -35,16 +38,28 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@v4
         with:
-          go-version: 1.23.x
+          go-version: 1.26.x
       - name: Retrieve golangci-lint version
         run: |
           echo "Version=$(head -n 1 "${GITHUB_WORKSPACE}/.golangci.yml" | tr -d '# ')" >> $GITHUB_OUTPUT
         id: version
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v8
         with:
           version: ${{ steps.version.outputs.Version }}
           only-new-issues: true
+
+  javascript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: examples/package-lock.json
+      - run: npm ci && npm run lint
+        working-directory: examples
 
   codespell:
     name: Codespell

@@ -22,7 +22,9 @@ func main() {
 	sessionDB := NewSessionDB()
 	server := NewWebAuthnServer(webAuthn, userDB, sessionDB)
 
-	router := gin.Default()
+	// Per-request console logging can dominate a local load test.
+	router := gin.New()
+	router.Use(gin.Recovery())
 	router.GET("/ping", server.Ping)
 	router.GET("/register/start/:username", server.RegisterStart)
 	router.POST("/register/finish/:username", server.RegisterFinish)

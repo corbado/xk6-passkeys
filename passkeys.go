@@ -32,7 +32,7 @@ func (p *Passkeys) CreateAttestationResponse(
 	rp virtualwebauthn.RelyingParty,
 	credential virtualwebauthn.Credential,
 	attestationOptions string,
-) string {
+) (string, error) {
 	aaguid, err := uuid.Parse(iCloudKeychainAaguid)
 	if err != nil {
 		panic(err)
@@ -46,10 +46,10 @@ func (p *Passkeys) CreateAttestationResponse(
 
 	parsedAttestationOptions, err := virtualwebauthn.ParseAttestationOptions(attestationOptions)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
-	return virtualwebauthn.CreateAttestationResponse(rp, authenticator, credential, *parsedAttestationOptions)
+	return virtualwebauthn.CreateAttestationResponse(rp, authenticator, credential, *parsedAttestationOptions), nil
 }
 
 // CreateAssertionResponse creates an assertion response.
@@ -58,7 +58,7 @@ func (p *Passkeys) CreateAssertionResponse(
 	credential virtualwebauthn.Credential,
 	userHandle string,
 	assertionOptions string,
-) string {
+) (string, error) {
 	aaguid, err := uuid.Parse(iCloudKeychainAaguid)
 	if err != nil {
 		panic(err)
@@ -73,8 +73,8 @@ func (p *Passkeys) CreateAssertionResponse(
 
 	parsedAssertionOptions, err := virtualwebauthn.ParseAssertionOptions(assertionOptions)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
-	return virtualwebauthn.CreateAssertionResponse(rp, authenticator, credential, *parsedAssertionOptions)
+	return virtualwebauthn.CreateAssertionResponse(rp, authenticator, credential, *parsedAssertionOptions), nil
 }

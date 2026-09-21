@@ -1,4 +1,6 @@
 MAKEFLAGS += --silent
+XK6_VERSION ?= v1.4.13
+K6_VERSION ?= $(shell go list -m -f '{{.Version}}' go.k6.io/k6)
 
 all: clean format test build
 
@@ -18,8 +20,7 @@ clean:
 
 ## build: Builds a custom 'k6' with the local extension. 
 build:
-	go install go.k6.io/xk6/cmd/xk6@latest
-	xk6 build --with $(shell go list -m)=.
+	go run go.k6.io/xk6/cmd/xk6@$(XK6_VERSION) build $(K6_VERSION) --with $(shell go list -m)=.
 
 ## format: Applies Go formatting to code.
 format:
@@ -27,6 +28,7 @@ format:
 
 ## test: Executes any unit tests.
 test:
-	go test -cover -race ./...
+	go test -cover -race .
+	cd examples/backend && go test -cover -race ./...
 
 .PHONY: build clean format help test
